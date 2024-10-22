@@ -5,6 +5,7 @@ numbers=()
 result=0
 is_first_number="1"
 
+
 # function that displays additional info
 additionalInfo () {
     echo "==============="
@@ -24,15 +25,13 @@ calculateResult () {
             is_first_number="1"
             continue
         fi
-        if [ "$operation" = "addition" ]; then
-            result=$((num+result))
-        elif [ "$operation" = "subtraction" ]; then
-            result=$((result-num))
-        elif [ "$operation" = "multiplication" ]; then
-            result=$((result * num))
-        elif [ "$operation" = "division by modulo" ]; then
-            result=$((result % num))
-        fi
+        case "$operation" in
+            "addition") result=$((result + num));;
+            "subtraction") result=$((result - num));;
+            "multiplication") result=$((result * num));;
+            "modulo") result=$((result % num));;
+            *) echo "No valid operation set"; exit 1;;
+        esac
     done
     return "$result"
 }
@@ -41,11 +40,11 @@ calculateResult () {
 while [ -n "$1" ]; do
     case "$1" in
         -o) case "$2" in
-            "+") operation="addition";;
-            "-") operation="subtraction";;
-            "*") operation="multiplication";;
-            "%") operation="division by modulo";;
-            *) echo "Invalid operation"; exit 1;;
+                "+") operation="addition";;
+                "-") operation="subtraction";;
+                "*") operation="multiplication";;
+                "%") operation="modulo";;
+                *) echo "Invalid operation"; exit 1;;
             esac
             shift;;
         -n) while [ -n "$2" ]; do
@@ -66,8 +65,12 @@ while [ -n "$1" ]; do
                     exit 1
                 fi
                 shift
-            done;;
-        -d) additionalInfo;;
+            done
+            if [ "${#numbers[@]}" -eq "1" ]; then
+                echo "There are must be minimum 2 arguments"
+                exit 1
+            fi;;
+        -d) additionalInfo; shift;;
         --) shift
             break;;
         *) echo "$1 is not an option"; exit 1;;
