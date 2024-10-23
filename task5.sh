@@ -4,14 +4,15 @@ inputfile=""
 outputfile=""
 new_text=""
 
-# function that converts lowercase letters to uppercase
-toUpperCase () {
-    echo "$1" | tr 'a-z' 'A-Z'
-}
-
-# function that converts uppercase letters to lowercase
-toLowerCase () {
-    echo "$1" | tr 'A-Z' 'a-z'
+#function that converts lowercase letters to uppercase and vice versa
+reverseFunc () {
+    if [[ $1 =~ [A-Z] ]]; then
+        echo "$1" | tr 'A-Z' 'a-z'
+    elif [[ $1 =~ [a-z] ]]; then
+        echo "$1" | tr 'a-z' 'A-Z'
+    else
+        echo "$1"
+    fi
 }
 
 
@@ -24,13 +25,7 @@ case "$1" in
             # read line by symbol
             for (( i=0; i<${#line}; i++ )); do
                 lt="${line:$i:1}"
-                if [[ $lt =~ [A-Z] ]]; then
-                    new_line+=$(toLowerCase "$lt")
-                elif [[ $lt =~ [a-z] ]]; then
-                    new_line+=$(toUpperCase "$lt")
-                else
-                    new_line+="$lt"
-                fi
+                new_line+=$(reverseFunc "$lt")
             done
             new_text+="$new_line\n"
         done < "$inputfile"
