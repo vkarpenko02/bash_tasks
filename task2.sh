@@ -30,7 +30,6 @@ calculateResult () {
             "subtraction") result=$((result - num));;
             "multiplication") result=$((result * num));;
             "modulo") result=$((result % num));;
-            *) echo "No valid operation set"; exit 1;;
         esac
     done
     return "$result"
