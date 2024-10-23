@@ -16,16 +16,17 @@ create_table () {
     local db_name="$1"
     local table_name="$2"
     shift 2
+    # check if database exists
     if [ -f "$db_name.txt" ]; then
-        # Add table name
+        # add table name
         echo "** Table: $table_name **" >> "$db_name.txt"
 
-        # Create a formatted row for the fields
+        # create a formatted row for the fields
         local row=""
         for el in "$@"; do
             if [[ ${#el} -gt 8 ]]; then
                 echo "Error: Field '$el' exceeds maximum length of 8 characters"
-                return
+                exit 1
             fi
             row+=" $el"
         done
@@ -35,6 +36,31 @@ create_table () {
         echo "Table '$table_name' created in database '$db_name'."
     else
         echo "Error: Database '$db_name' does not exist"
+        exit 1
+    fi
+}
+
+insert_data () {
+    local db_name="$1"
+    local table_name="$2"
+    shift 2
+    #check if database and table exists
+    if [ -f "$db_name.txt" ] && grep -q "$table_name" "$db_name.txt"; then
+        # create a formatted row for the fields
+        local row=""
+        for el in "$@"; do
+            if [[ ${#el} -gt 8 ]]; then
+                echo "Error: Field '$el' exceeds maximum length of 8 characters"
+                exit 1
+            fi
+            row+=" $el"
+        done
+        row+=" "
+
+        echo "**$row**" >> "$db_name.txt"
+        echo "Data inserted in table $table_name"
+    else
+        echo "Error: Database '$db_name' or table '$table_name' does not exist"
         exit 1
     fi
 }
