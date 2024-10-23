@@ -43,7 +43,7 @@ uptime_info=$(uptime)
 log_message "System Uptime: $(echo "$uptime_info" | awk -F, '{print $1}' | sed 's/^.*up //')"
 
 # Log information about used and free space
-read total_size available_size <<< "$(df -kh . | awk 'NR==2 {print $2, $4}')"
+read -r total_size available_size <<< "$(df -kh . | awk 'NR==2 {print $2, $4}')"
 log_message "Total size: $total_size"
 log_message "Available size: $available_size"
 
