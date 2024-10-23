@@ -57,7 +57,12 @@ insert_data () {
         done
         row+=" "
 
-        echo "**$row**" >> "$db_name.txt"
+        # insert right into specified table
+        awk -v table="$table_name" -v data="**$row**" '
+            /'"$table_name"'/{ print; getline; print; print data; next }
+            1
+        ' "$db_name.txt" > temp.txt && mv temp.txt "$db_name.txt"
+
         echo "Data inserted in table $table_name"
     else
         echo "Error: Database '$db_name' or table '$table_name' does not exist"
