@@ -70,6 +70,27 @@ insert_data () {
     fi
 }
 
+select_data () {
+    local db_name="$1"
+    local table_name="$2"
+
+    #check if database and table exists
+    if [ -f "$db_name.txt" ] && grep -q "$table_name" "$db_name.txt"; then
+        echo "Data from table '${table_name}' in database '${db_name}':"
+        awk -v table="$table_name" ' # initialize variable to work with
+            # when we find the table name, start printing
+            /'"$table_name"'/ { found_table=1; next }
+            # if we found the table and encounter a blank line, stop printing
+            found_table && /^$/ { exit }
+            # print all lines after finding the table name
+            found_table { print }
+        ' "$db_name.txt"
+    else
+        echo "Error: Database '$db_name' or table '$table_name' does not exist"
+        exit 1
+    fi
+}
+
 case "$1" in
     create_db) create_db "$2";;
     create_table) create_table "$2" "$3" "${@:4}";;
