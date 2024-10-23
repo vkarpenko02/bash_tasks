@@ -4,6 +4,18 @@ shft=0
 inputfile="None"
 outputfile="None"
 
+# chech if input file exists and output file is enetered
+checkForFiles () {
+    if [[ -z "$inputfile" || ! -f "$inputfile" ]]; then
+        echo "Input file is missing or does not exist."
+        exit 1
+    fi
+    if [[ -z "$outputfile" ]]; then
+        echo "Output file is not specified."
+        exit 1
+    fi
+}
+
 # read input
 while [ -n "$1" ]; do
     case "$1" in
@@ -40,6 +52,8 @@ shift_letter() {
     fi
     echo "$new_char"
 }
+
+checkForFiles
 
 # read textfile by line
 while IFS= read -r line; do
