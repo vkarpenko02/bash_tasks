@@ -25,6 +25,16 @@ swapFunc () {
     fi
 }
 
+# function to reverse text
+reverseText () {
+    while IFS= read -r line; do
+        new_line=$(echo "$line" | rev)
+        new_text+="$new_line\n"
+    done < "$inputfile"
+
+    echo -e "$new_text" > "$outputfile"
+}
+
 # function that reads a file by symbol
 readFile () {
     while IFS= read -r line; do
@@ -66,13 +76,7 @@ while [ -n "$1" ]; do
         -o) outputfile="$2"; shift;;
         -v) readFile "swap"; shift;;
         -s) readFile "replace"; shift;;
-        -r) while IFS= read -r line; do
-                new_line=$(echo "$line" | rev)
-                new_text+="$new_line\n"
-            done < "$inputfile"
-
-            echo -e "$new_text" > "$outputfile"
-            shift;;
+        -r) reverseText; shift;;
         -l) readFile "tolower"; shift;;
         -u) readFile "toupper"; shift;;
         *) echo "$1 is not an option"; exit 1;;
