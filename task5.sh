@@ -39,34 +39,27 @@ reverseText () {
 readFile () {
     while IFS= read -r line; do
         new_line=""
-        if [ "$1" = "replace" ]; then
-            for word in $line; do
-                if [[ ${word:0:1}"" =~ [Aa] ]; then
-                    if [[ "${word:0:1}" = "A" ]]; then
-                        new_line+="B${word:1} "
-                    else
-                        new_line+="b${word:1} "
-                    fi
-                else
-                    new_line+="$word "
-                fi
-            done
-        else
-            for (( i=0; i<${#line}; i++ )); do
-                lt="${line:$i:1}"
-                if [ "$1" = "swap" ]; then
-                    new_line+=$(swapFunc "$lt")
-                elif [ "$1" = "toupper" ]; then
-                    new_line+=$(toUpperCase "$lt")
-                elif [ "$1" = "tolower" ]; then
-                    new_line+=$(toLowerCase "$lt")
-                fi
-            done
-        fi
+        for (( i=0; i<${#line}; i++ )); do
+            lt="${line:$i:1}"
+            if [ "$1" = "swap" ]; then
+                new_line+=$(swapFunc "$lt")
+            elif [ "$1" = "toupper" ]; then
+                new_line+=$(toUpperCase "$lt")
+            elif [ "$1" = "tolower" ]; then
+                new_line+=$(toLowerCase "$lt")
+            fi
+        done
         new_text+="$new_line\n"
     done < "$inputfile"
-
     echo -e "$new_text" > "$outputfile"
+}
+
+# function for replacement
+replaceWords () {
+    local a_word="$1"
+    local b_word="$2"
+
+    sed "s/$a_word/$b_word/Ig" "$inputfile" > "$outputfile"
 }
 
 
@@ -75,7 +68,21 @@ while [ -n "$1" ]; do
         -i) inputfile="$2"; shift;;
         -o) outputfile="$2"; shift;;
         -v) readFile "swap"; shift;;
-        -s) readFile "replace"; shift;;
+        -s) words=()
+            while [ -n "$2" ]; do
+                if [[ ! "$2" =~ ^-.+ ]]; then
+                    words+=("$2")
+                else
+                    break
+                fi
+                shift
+            done
+            if [ "${#words[@]}" -ne "2" ]; then
+                echo "There are must be 2 arguments"
+                exit 1
+            else
+                replaceWords "${words[0]}" "${words[1]}"
+            fi;;
         -r) reverseText; shift;;
         -l) readFile "tolower"; shift;;
         -u) readFile "toupper"; shift;;
@@ -83,5 +90,3 @@ while [ -n "$1" ]; do
     esac
     shift
 done
-
-
