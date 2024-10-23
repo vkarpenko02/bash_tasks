@@ -91,6 +91,14 @@ select_data () {
     fi
 }
 
+delete_data () {
+    local db_name="$1"
+    local table_name="$2"
+    local condition="$3"
+
+    echo "Function in development!"
+}
+
 case "$1" in
     create_db) create_db "$2";;
     create_table) create_table "$2" "$3" "${@:4}";;
