@@ -62,13 +62,25 @@ replaceWords () {
     sed "s/$a_word/$b_word/Ig" "$inputfile" > "$outputfile"
 }
 
+checkForFiles () {
+    if [[ -z "$inputfile" || ! -f "$inputfile" ]]; then
+        echo "Input file is missing or does not exist."
+        exit 1
+    fi
+    if [[ -z "$outputfile" ]]; then
+        echo "Output file is not specified."
+        exit 1
+    fi
+}
+
 
 while [ -n "$1" ]; do
     case "$1" in
         -i) inputfile="$2"; shift;;
         -o) outputfile="$2"; shift;;
-        -v) readFile "swap"; shift;;
-        -s) words=()
+        -v) checkForFiles; readFile "swap"; shift;;
+        -s) checkForFiles
+            words=()
             while [ -n "$2" ]; do
                 if [[ ! "$2" =~ ^-.+ ]]; then
                     words+=("$2")
@@ -82,10 +94,11 @@ while [ -n "$1" ]; do
                 exit 1
             else
                 replaceWords "${words[0]}" "${words[1]}"
-            fi;;
-        -r) reverseText; shift;;
-        -l) readFile "tolower"; shift;;
-        -u) readFile "toupper"; shift;;
+            fi
+            shift;;
+        -r) checkForFiles; reverseText; shift;;
+        -l) checkForFiles; readFile "tolower"; shift;;
+        -u) checkForFiles; readFile "toupper"; shift;;
         *) echo "$1 is not an option"; exit 1;;
     esac
     shift
