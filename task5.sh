@@ -6,20 +6,20 @@ new_text=""
 
 # to uppercase function
 toUpperCase () {
-    echo "$1" | tr 'a-z' 'A-Z'
+    echo "$1" | tr '[:lower:]' '[:upper:]'
 }
 
 # to lowercase function
 toLowerCase () {
-    echo "$1" | tr 'A-Z' 'a-z'
+    echo "$1" | tr '[:upper:]' '[:lower:]'
 }
 
 # function that converts lowercase letters to uppercase and vice versa
 swapFunc () {
     if [[ $1 =~ [A-Z] ]]; then
-        echo $(toLowerCase "$1")
+        toLowerCase "$1"
     elif [[ $1 =~ [a-z] ]]; then
-        echo $(toUpperCase "$1")
+        toUpperCase "$1"
     else
         echo "$1"
     fi
